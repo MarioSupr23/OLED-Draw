@@ -113,11 +113,13 @@ async function connectBLE() {
   }
 }
 
+// FIXED: Using writeValueWithoutResponse stops the phone from waiting for handshakes,
+// forcing a real-time fluid stream of data points to the ESP32.
 function send(m) {
   if (!rxCharacteristic) return;
   const encoder = new TextEncoder();
-  // Using writeValueWithResponse ensures data isn't dropped over Bluetooth buffers
-  rxCharacteristic.writeValueWithResponse(encoder.encode(m)).catch(e => console.log(e));
+  rxCharacteristic.writeValueWithoutResponse(encoder.encode(m))
+    .catch(e => console.log("BLE Write Error:", e));
 }
 
 /* ── Drawing Logics ───────────────────────────── */
